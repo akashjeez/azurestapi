@@ -1,0 +1,505 @@
+
+## Azure List All Subscrptions
+
+resourcecontainers
+| where type =~ 'Microsoft.Resources/Subscriptions'
+| project Subscription_ID = tostring(id), 
+    Subscription_Name = tostring(name), 
+    Type = tostring(type), 
+    Tenant_ID = tostring(tenantId),
+    State = tostring(properties.state),
+    Authorization_Source = tostring(properties.authorizationSource)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List All Resource Groups
+
+resourcecontainers
+| where type =~ 'Microsoft.Resources/Subscriptions/resourcegroups'
+| project Resource_ID = tostring(id),
+    Subscription_ID = tostring(subscriptionId),
+    Resource_Group = tostring(name), 
+    Resource_Type = tostring(type), 
+    Location = tostring(location)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List ALL Resoures
+
+Resources
+| project Resource_ID = tostring(id),
+    Subscription_ID = tostring(subscriptionId),
+    Resoure_Group = tostring(resourceGroup),
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location),
+    Properties = tostring(properties),
+    Tags = tostring(tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List Virtual Machines
+
+Resources
+| where type =~ 'Microsoft.Compute/VirtualMachines'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    VM_Status = tostring(properties.extended.instanceView.powerState.displayStatus), 
+    Instance_Type = tostring(properties.hardwareProfile.vmSize), 
+    Network_Profile = tostring(properties.networkProfile.networkInterfaces), 
+    OS_Disk = tostring(properties.storageProfile.osDisk), 
+    Data_Disks = tostring(properties.storageProfile.dataDisks), 
+    VM_ID = tostring(properties.vmId),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List Classic Virtual Machines
+
+Resources
+| where type =~ 'Microsoft.classicCompute/VirtualMachines'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    VM_Status = tostring(properties.instanceView.powerState), 
+    Hardware_Profile = tostring(properties.hardwareProfile),
+    OS_Disk = tostring(properties.storageProfile.operatingSystemDisk),
+    Data_Disks = tostring(properties.storageProfile.dataDisks),
+    Domain_Names = tostring(properties.domainName),
+    Network_Profile = tostring(properties.networkProfile),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List Classic Storage Accounts
+
+Resources
+| where type =~ 'Microsoft.ClassicStorage/StorageAccounts'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    Account_Type = tostring(properties.accountType),
+    Creation_Date = tostring(properties.creationTime),
+    Geo_Primary_Region = tostring(properties.geoPrimaryRegion),
+    Geo_Secondary_Region = tostring(properties.geoSecondaryRegion),
+    Endpoints = tostring(properties.endpoints),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List Storage Accounts
+
+Resources
+| where type =~ 'Microsoft.Storage/StorageAccounts'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    Access_Tier = tostring(properties.accessTier),
+    Encryption = tostring(properties.encryption),
+    Creation_Date = tostring(properties.creationTime),
+    Primary_Endpoints = tostring(properties.primaryEndpoints),
+    Secondary_Location = tostring(properties.secondaryLocation),
+    Secondary_Endpoints = tostring(properties.secondaryEndpoints),
+    Network_ACLS = tostring(properties.networkAcls),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List SQL Databases
+
+Resources
+| where type =~ 'Microsoft.SQL/Servers/Databases'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Database_Server_Name = tostring(split(id, '/')[8]),
+    Database_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    Storage_Account_Type = tostring(properties.storageAccountType),
+    Secondary_Location = tostring(properties.defaultSecondaryLocation),
+    Collation = tostring(properties.catalogCollation),
+    Earliest_Restore_Date = tostring(properties.earliestRestoreDate),
+    Zone_Redudant = tostring(properties.zoneRedundant),
+    Creation_Date = tostring(properties.creationDate),
+    Max_Size_Bytes = tostring(properties.maxSizeBytes),
+    Database_ID = tostring(properties.databaseId),
+    Pricing_Tier = tostring(properties.currentSku),
+    Elastic_Pool_ID = tostring(properties.elasticPoolId),
+    Elastic_Pool_Name = tostring(split(properties.elasticPoolId, '/')[10]),
+    Tags = tostring(properties.tags)
+| where Resource_Name != 'master'
+
+--------------------------------------------------------------------------------------------
+
+## Azure List SQL Elastic Pools
+
+Resources
+| where type =~ 'Microsoft.SQL/Servers/ElasticPools'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Database_Server_Name = tostring(split(id, '/')[8]),
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    Zone_Redundant = tostring(properties.zoneRedundant),
+    Creation_Date = tostring(properties.creationDate),
+    Max_Size_Bytes = tostring(properties.maxSizeBytes),
+    Min_Capacity = tostring(properties.perDatabaseSettings.minCapacity),
+    Max_Capacity = tostring(properties.perDatabaseSettings.maxCapacity),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List App Services
+
+Resources
+| where type =~ 'Microsoft.Web/Sites'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    Pricing_Tier = tostring(properties.sku),
+    App_Status = tostring(properties.state),
+    Inbound_IPAddress = tostring(properties.possibleInboundIpAddresses),
+    Outbound_IPAddress = tostring(properties.possibleOutboundIpAddresses),
+    ASP_Resource_ID = tostring(properties.serverFarmId),
+    Last_Modified = tostring(properties.lastModifiedTimeUtc),
+    App_URL = tostring(properties.defaultHostName),
+    FTP_HostName = tostring(properties.ftpsHostName),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List App Service Plans
+
+Resources
+| where type =~ 'Microsoft.Web/ServerFarms'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    Num_of_Apps = tostring(properties.numberOfSites),
+    Kind = tostring(properties.kind),
+    Geo_Region = tostring(properties.geoRegion),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List Managed Disks
+
+Resources
+| where type =~ 'Microsoft.Compute/Disks'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    Disk_Status = tostring(properties.diskState),
+    Disk_OS = tostring(properties.osType),
+    Disk_Size_GB = tostring(properties.diskSizeGB),
+    Disk_Size_Bytes = tostring(properties.diskSizeBytes),
+    Created_Date = tostring(properties.timeCreated),
+    Disk_MBPS_ReadWrite = tostring(properties.diskMBpsReadWrite),
+    Disk_IOPS_ReadWrite = tostring(properties.diskIOPSReadWrite),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List Snaphsots
+
+Resources
+| where type =~ 'Microsoft.Compute/Snapshots'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    Disk_Size_GB = tostring(properties.diskSizeGB),
+    Disk_Size_Bytes = tostring(properties.diskSizeBytes),
+    Creation_Date = tostring(properties.timeCreated),
+    Source_Resource_ID = tostring(properties.creationData.sourceResourceId),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List Virtual Networks
+
+Resources
+| where type =~ 'Microsoft.Network/VirtualNetworks'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    Subnets = tostring(properties.subnets),
+    DHCP_Options = tostring(properties.dhcpOptions),
+    Address_Space = tostring(properties.addressSpace),
+    VN_Peerings = tostring(properties.virtualNetworkPeerings),
+    Enable_VM_Protection = tostring(properties.enableVmProtection),
+    Enable_DDOS_Protection = tostring(properties.enableDdosProtection),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List Advisor Recommendations
+
+AdvisorResources
+| where type == 'microsoft.advisor/recommendations'
+| project Recommendation_ID = tostring(id), 
+    Category = tostring(properties.category),
+    Impact = tostring(properties.impact),
+    Resource_Name = tostring(properties.impactedValue),
+    Resource_Type = tostring(properties.impactedField),
+    Resource_ID = tostring(properties.resourceMetadata.resourceId),
+    Problem = tostring(properties.shortDescription.problem),
+    Solution = tostring(properties.extendedProperties)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List Azure CosmosDB Accounts
+
+Resources
+| where type =~ 'Microsoft.DocumentDb/DatabaseAccounts'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    Virtual_Network_Rules = tostring(properties.virtualNetworkRules),
+    Public_Network_Access = tostring(properties.publicNetworkAccess),
+    Locations = tostring(properties.publicNetworkAccess),
+    Document_Endpoint = tostring(properties.documentEndpoint),
+    Offer_Type = tostring(properties.databaseAccountOfferType),
+    Consistency_Policy = tostring(properties.consistencyPolicy),
+    Failover_Policy = tostring(properties.failoverPolicies),
+    Backup_Policy = tostring(properties.backupPolicy),
+    IP_Range_Filters = tostring(properties.ipRangeFilter),
+    Read_Locations = tostring(properties.readLocations),
+    Write_Locations = tostring(properties.writeLocations),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List SQL Managed Instances
+
+Resources
+| where type =~ 'Microsoft.SQL/ManagedInstances'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    Collation = tostring(properties.collation),
+    FQHN = tostring(properties.fullyQualifiedDomainName),
+    Admin_Login = tostring(properties.administratorLogin),
+    License_Type = tostring(properties.licenseType),
+    DNS_Zone = tostring(properties.dnsZone),
+    V_Cores = tostring(properties.vCores),
+    Virtual_Network_Name = tostring(split(properties.subnetId, '/')[8]),
+    Subnet_Name = tostring(split(properties.subnetId, '/')[10]),
+    Subnet_ID = tostring(properties.subnetId),
+    Storage_Size_GB = tostring(properties.storageSizeInGB),
+    Proxy_Override = tostring(properties.proxyOverride),
+    Minimum_TLS_Version = tostring(properties.minimalTlsVersion),
+    Storage_Account_Type = tostring(properties.storageAccountType),
+    Primary_Endpoint_Conns = tostring(properties.privateEndpointConnections),
+    PublicData_Endpoint_Enabled = tostring(properties.publicDataEndpointEnabled),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List CDN Profiles
+
+Resources
+| where type =~ 'Microsoft.CDN/Profiles'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    Resource_State = tostring(properties.resourceState),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List Network Security Groups
+
+Resources
+| where type =~ 'Microsoft.Network/NetworkSecurityGroups'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    Security_Rules = tostring(properties.securityRules),
+    Network_Interfaces = tostring(properties.networkInterfaces),
+    Default_Security_Rules = tostring(properties.defaultSecurityRules),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List Public IP Addresses
+
+Resources
+| where type =~ 'Microsoft.Network/PublicIPAddresses'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    IP_Address = tostring(properties.ipAddress),
+    IP_Configuration = tostring(properties.ipConfiguration),
+    Idle_Timeuut_Minutes = tostring(properties.idleTimeoutInMinutes),
+    Public_IP_Address_Version = tostring(properties.publicIPAddressVersion),
+    Public_IP_Allocation_Methof = tostring(properties.publicIPAllocationMethod),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List Load Balancers
+
+Resources
+| where type =~ 'Microsoft.Network/LoadBalancers'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    Probes = tostring(properties.probes),
+    Load_Balancer_Rules = tostring(properties.loadBalancingRules),
+    Backend_Address_Pools = tostring(properties.backendAddressPools),
+    Inbound_NAT_Rules = tostring(properties.inboundNatRules),
+    Inbound_NAT_Pools = tostring(properties.inboundNatPools),
+    Frontend_IP_Config = tostring(properties.frontendIPConfigurations),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List Application Gateways
+
+Resources
+| where type =~ 'Microsoft.Network/ApplicationGateways'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    SKU = tostring(properties.sku),
+    Probes = tostring(properties.probes),
+    HTTP_Listeners = tostring(properties.httpListeners),
+    Frontend_Ports = tostring(properties.frontendPorts),
+    Requests_Routing_Rules = tostring(properties.requestRoutingRules),
+    backend_Address_Pools = tostring(properties.backendAddressPools),
+    Operational_Status = tostring(properties.operationalState),
+    Rewrite_Rulesets = tostring(properties.rewriteRuleSets),
+    Autoscale_Config = tostring(properties.autoscaleConfiguration),
+    Gateway_IP_Config = tostring(properties.gatewayIPConfigurations),
+    Frontend_IP_Config = tostring(properties.frontendIPConfigurations),
+    WebApp_Firewall_Config = tostring(properties.webApplicationFirewallConfiguration),
+    Backend_HTTP_Setting_Collection = tostring(properties.backendHttpSettingsCollection),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List Recovery Service Vaults
+
+Resources
+| where type =~ 'Microsoft.RecoveryServices/Vaults'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List Log Analytics Workspaces
+
+Resources
+| where type =~ 'Microsoft.OperationalInsights/Workspaces'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    SKU = tostring(properties.sku),
+    Features = tostring(properties.features),
+    Retention_Days = tostring(properties.retentionInDays),
+    Creation_Date = tostring(properties.createdDate),
+    Modified_Date = tostring(properties.modifiedDate),
+    Customer_ID = tostring(properties.customerId),
+    Workspace_Capping = tostring(properties.workspaceCapping),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List Key Vaults
+
+Resources
+| where type =~ 'Microsoft.KeyVault/Vaults'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    Vault_URL= tostring(properties.vaultUri),
+    SKU = tostring(properties.sku),
+    Access_Policies = tostring(properties.accessPolicies),
+    Network_ACLS = tostring(properties.networkAcls),
+    Enable_Purge_Protection = tostring(properties.enablePurgeProtection),
+    Enable_Soft_Delete = tostring(properties.enableSoftDelete),
+    Enable_RBAC_Authorization = tostring(properties.enableRbacAuthorization),
+    Soft_Delete_Retention_Days = tostring(properties.softDeleteRetentionInDays),
+    Tags = tostring(properties.tags)
+
+--------------------------------------------------------------------------------------------
+
+## Azure List VM Images
+
+Resources
+| where type =~ 'Microsoft.Compute/Images'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    OS_Disk = tostring(properties.storageProfile.osDisk),
+    Data_Disks = tostring(properties.storageProfile.dataDisks),
+    HyperV_Gen = tostring(properties.hyperVGeneration),
+    VM_Resource_ID = tostring(properties.sourceVirtualMachine.id),
+
+--------------------------------------------------------------------------------------------
