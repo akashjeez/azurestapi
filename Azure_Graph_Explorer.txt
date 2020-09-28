@@ -1,28 +1,28 @@
 
-## Azure List All Subscrptions
+## Azure List All Subscriptions
 
-resourcecontainers
+ResourceContainers
 | where type =~ 'Microsoft.Resources/Subscriptions'
 | project Subscription_ID = tostring(id), 
     Subscription_Name = tostring(name), 
     Type = tostring(type), 
     Tenant_ID = tostring(tenantId),
     State = tostring(properties.state),
-    Authorization_Source = tostring(properties.authorizationSource)
+    Auth_Source = tostring(properties.authorizationSource)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List All Resource Groups
 
-resourcecontainers
-| where type =~ 'Microsoft.Resources/Subscriptions/resourcegroups'
+ResourceContainers
+| where type =~ 'Microsoft.Resources/Subscriptions/ResourceGroups'
 | project Resource_ID = tostring(id),
     Subscription_ID = tostring(subscriptionId),
     Resource_Group = tostring(name), 
     Resource_Type = tostring(type), 
     Location = tostring(location)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List ALL Resoures
 
@@ -36,7 +36,7 @@ Resources
     Properties = tostring(properties),
     Tags = tostring(tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List Virtual Machines
 
@@ -44,7 +44,7 @@ Resources
 | where type =~ 'Microsoft.Compute/VirtualMachines'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
@@ -56,7 +56,25 @@ Resources
     VM_ID = tostring(properties.vmId),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+
+## Azure List SQL Virtual Machines
+
+Resources
+| where type =~ 'Microsoft.SqlVirtualMachine/SqlVirtualMachines'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location),
+    SQL_Management = tostring(properties.sqlManagement),
+    SQL_Image_Offer = tostring(properties.sqlImageOffer),
+    SQL_Image_SKU = tostring(properties.sqlImageSku),
+    VM_Resource_ID = tostring(properties.virtualMachineResourceId),
+    SQL_Server_License_Type = tostring(properties.sqlServerLicenseType)
+
+---------------------------------------------------------------------------------------------------
 
 ## Azure List Classic Virtual Machines
 
@@ -64,7 +82,7 @@ Resources
 | where type =~ 'Microsoft.classicCompute/VirtualMachines'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
@@ -76,7 +94,7 @@ Resources
     Network_Profile = tostring(properties.networkProfile),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List Classic Storage Accounts
 
@@ -84,7 +102,7 @@ Resources
 | where type =~ 'Microsoft.ClassicStorage/StorageAccounts'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
@@ -95,7 +113,7 @@ Resources
     Endpoints = tostring(properties.endpoints),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List Storage Accounts
 
@@ -103,7 +121,7 @@ Resources
 | where type =~ 'Microsoft.Storage/StorageAccounts'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
@@ -116,7 +134,7 @@ Resources
     Network_ACLS = tostring(properties.networkAcls),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List SQL Databases
 
@@ -124,7 +142,7 @@ Resources
 | where type =~ 'Microsoft.SQL/Servers/Databases'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Database_Server_Name = tostring(split(id, '/')[8]),
     Database_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -143,7 +161,7 @@ Resources
     Tags = tostring(properties.tags)
 | where Resource_Name != 'master'
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List SQL Elastic Pools
 
@@ -151,7 +169,7 @@ Resources
 | where type =~ 'Microsoft.SQL/Servers/ElasticPools'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Database_Server_Name = tostring(split(id, '/')[8]),
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -163,7 +181,7 @@ Resources
     Max_Capacity = tostring(properties.perDatabaseSettings.maxCapacity),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List App Services
 
@@ -171,7 +189,7 @@ Resources
 | where type =~ 'Microsoft.Web/Sites'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
@@ -185,7 +203,7 @@ Resources
     FTP_HostName = tostring(properties.ftpsHostName),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List App Service Plans
 
@@ -193,7 +211,7 @@ Resources
 | where type =~ 'Microsoft.Web/ServerFarms'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
@@ -202,7 +220,7 @@ Resources
     Geo_Region = tostring(properties.geoRegion),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List Managed Disks
 
@@ -210,7 +228,7 @@ Resources
 | where type =~ 'Microsoft.Compute/Disks'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
@@ -223,7 +241,7 @@ Resources
     Disk_IOPS_ReadWrite = tostring(properties.diskIOPSReadWrite),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List Snaphsots
 
@@ -231,7 +249,7 @@ Resources
 | where type =~ 'Microsoft.Compute/Snapshots'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
@@ -241,7 +259,7 @@ Resources
     Source_Resource_ID = tostring(properties.creationData.sourceResourceId),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List Virtual Networks
 
@@ -249,7 +267,7 @@ Resources
 | where type =~ 'Microsoft.Network/VirtualNetworks'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
@@ -261,22 +279,7 @@ Resources
     Enable_DDOS_Protection = tostring(properties.enableDdosProtection),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
-
-## Azure List Advisor Recommendations
-
-AdvisorResources
-| where type == 'microsoft.advisor/recommendations'
-| project Recommendation_ID = tostring(id), 
-    Category = tostring(properties.category),
-    Impact = tostring(properties.impact),
-    Resource_Name = tostring(properties.impactedValue),
-    Resource_Type = tostring(properties.impactedField),
-    Resource_ID = tostring(properties.resourceMetadata.resourceId),
-    Problem = tostring(properties.shortDescription.problem),
-    Solution = tostring(properties.extendedProperties)
-
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List Azure CosmosDB Accounts
 
@@ -284,7 +287,7 @@ Resources
 | where type =~ 'Microsoft.DocumentDb/DatabaseAccounts'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
@@ -301,7 +304,7 @@ Resources
     Write_Locations = tostring(properties.writeLocations),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List SQL Managed Instances
 
@@ -309,7 +312,7 @@ Resources
 | where type =~ 'Microsoft.SQL/ManagedInstances'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
@@ -330,7 +333,7 @@ Resources
     PublicData_Endpoint_Enabled = tostring(properties.publicDataEndpointEnabled),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List CDN Profiles
 
@@ -338,14 +341,14 @@ Resources
 | where type =~ 'Microsoft.CDN/Profiles'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
     Resource_State = tostring(properties.resourceState),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List Network Security Groups
 
@@ -353,7 +356,7 @@ Resources
 | where type =~ 'Microsoft.Network/NetworkSecurityGroups'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
@@ -362,7 +365,7 @@ Resources
     Default_Security_Rules = tostring(properties.defaultSecurityRules),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List Public IP Addresses
 
@@ -370,7 +373,7 @@ Resources
 | where type =~ 'Microsoft.Network/PublicIPAddresses'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
@@ -381,7 +384,7 @@ Resources
     Public_IP_Allocation_Methof = tostring(properties.publicIPAllocationMethod),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List Load Balancers
 
@@ -389,7 +392,7 @@ Resources
 | where type =~ 'Microsoft.Network/LoadBalancers'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
@@ -401,7 +404,7 @@ Resources
     Frontend_IP_Config = tostring(properties.frontendIPConfigurations),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List Application Gateways
 
@@ -409,7 +412,7 @@ Resources
 | where type =~ 'Microsoft.Network/ApplicationGateways'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
@@ -428,7 +431,7 @@ Resources
     Backend_HTTP_Setting_Collection = tostring(properties.backendHttpSettingsCollection),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List Recovery Service Vaults
 
@@ -436,13 +439,13 @@ Resources
 | where type =~ 'Microsoft.RecoveryServices/Vaults'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List Log Analytics Workspaces
 
@@ -450,7 +453,7 @@ Resources
 | where type =~ 'Microsoft.OperationalInsights/Workspaces'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
@@ -463,7 +466,7 @@ Resources
     Workspace_Capping = tostring(properties.workspaceCapping),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List Key Vaults
 
@@ -471,7 +474,7 @@ Resources
 | where type =~ 'Microsoft.KeyVault/Vaults'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
@@ -485,7 +488,7 @@ Resources
     Soft_Delete_Retention_Days = tostring(properties.softDeleteRetentionInDays),
     Tags = tostring(properties.tags)
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 
 ## Azure List VM Images
 
@@ -493,7 +496,7 @@ Resources
 | where type =~ 'Microsoft.Compute/Images'
 | project Resource_ID = tostring(id), 
     Subscription_ID = tostring(subscriptionId), 
-    Resource_Group_Name = tostring(resourceGroup), 
+    Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
@@ -502,4 +505,100 @@ Resources
     HyperV_Gen = tostring(properties.hyperVGeneration),
     VM_Resource_ID = tostring(properties.sourceVirtualMachine.id),
 
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+
+## Azure List Container Registries
+
+Resources
+| where type =~ 'Microsoft.ContainerRegistry/Registries'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location),
+    Policies = tostring(properties.policies),
+    Creation_Date = tostring(properties.creationDate),
+    Login_Server = tostring(properties.loginServer),
+    AdminUser_Enabled = iif(properties.adminUserEnabled == true, 'Yes', 'No')
+
+---------------------------------------------------------------------------------------------------
+
+## Azure List MySQL Database Servers
+
+Resources
+| where type =~ 'Microsoft.DBforMySQL/Servers'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location),
+    Version = tostring(properties.version),
+    Private_Endpoint_Conns = tostring(properties.privateEndpointConnectionss),
+    FQHN = tostring(properties.fullyQualifiedDomainName),
+    StorageProfile = tostring(properties.storageProfile),
+    Admin_Login = tostring(properties.administratorLogin),
+    Replica_Capacity = tostring(properties.replicaCapacity),
+    User_Visible_State = tostring(properties.userVisibleState),
+    SSL_Enforcement = tostring(properties.sslEnforcement),
+    Infra_Encryption = tostring(properties.infrastructureEncryption),
+    Public_Network_Access = tostring(properties.publicNetworkAccess),
+    Earliest_Restore_Date = tostring(properties.earliestRestoreDate),
+    Minimal_TLS_Version = tostring(properties.minimalTlsVersion),
+    Tags = tostring(properties.tags)
+
+---------------------------------------------------------------------------------------------------
+
+## Azure List Advisor Recommendations
+
+AdvisorResources
+| where type =~ 'Microsoft.Advisor/Recommendations'
+| project Recommendation_ID = tostring(id), 
+    Category = tostring(properties.category),
+    Impact = tostring(properties.impact),
+    Resource_Name = tostring(properties.impactedValue),
+    Resource_Type = tostring(properties.impactedField),
+    Resource_ID = tostring(properties.resourceMetadata.resourceId),
+    Problem = tostring(properties.shortDescription.problem),
+    Solution = tostring(properties.extendedProperties)
+
+---------------------------------------------------------------------------------------------------
+
+## Azure List Advisor Recommendations
+## Right-size or shutdown underutilized virtual machines
+
+AdvisorResources
+| where type =~ 'Microsoft.Advisor/Recommendations'
+| where properties.category == 'Cost' and 
+    properties.shortDescription.problem == 'Right-size or shutdown underutilized virtual machines'
+| project Resource_ID = tostring(properties.resourceMetadata.resourceId),
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group = tostring(resourceGroup),
+    Resource_Name = tostring(properties.impactedValue),
+    Resource_Type = tostring(properties.impactedField),
+    Category = tostring(properties.category),
+    Impact = tostring(properties.impact),
+    Max_CPU = tostring(properties.extendedProperties.MaxCpuP95),
+    Max_Memory = tostring(properties.extendedProperties.MaxMemoryP95),
+    Max_Network = tostring(properties.extendedProperties.MaxTotalNetworkP95),
+    Current_SKU = tostring(properties.extendedProperties.currentSku),
+    Target_SKU = tostring(properties.extendedProperties.targetSku)
+
+---------------------------------------------------------------------------------------------------
+
+## Azure List Virtual Clusters
+
+Resources
+| where type =~ "Microsoft.Sql/VirtualClusters"
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId), 
+    Resource_Group = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    Subnet_ID = tostring(properties.subnetId),
+    Child_Resources = tostring(properties.childResources[0]),
+    Tags = tostring(properties.tags)
+
+---------------------------------------------------------------------------------------------------
