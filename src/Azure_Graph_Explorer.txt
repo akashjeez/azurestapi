@@ -790,7 +790,9 @@ AdvisorResources
     | project Subscription_Name = name, subscriptionId )
 on subscriptionId
 | where type =~ 'Microsoft.Advisor/Recommendations'
-| project Recommendation_ID = tostring(id), 
+| project Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
+    Recommendation_ID = tostring(id), 
     Category = tostring(properties.category),
     Impact = tostring(properties.impact),
     Resource_Name = tostring(properties.impactedValue),
