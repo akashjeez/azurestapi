@@ -18,15 +18,9 @@ ResourceContainers
 ## Azure List All Resource Groups
 
 ResourceContainers
-| join kind = leftouter (
-    ResourceContainers 
-    | where type =~ 'Microsoft.Resources/Subscriptions' 
-    | project Subscription_Name = name, subscriptionId )
-on subscriptionId
 | where type =~ 'Microsoft.Resources/Subscriptions/ResourceGroups'
 | project Resource_ID = tostring(id),
     Subscription_ID = tostring(subscriptionId),
-    Subscription_Name = tostring(Subscription_Name),
     Resource_Group = tostring(name), 
     Resource_Type = tostring(type), 
     Location = tostring(location)
@@ -790,6 +784,11 @@ on subscriptionId
 ## Azure List Advisor Recommendations
 
 AdvisorResources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.Advisor/Recommendations'
 | project Recommendation_ID = tostring(id), 
     Category = tostring(properties.category),
@@ -806,6 +805,11 @@ AdvisorResources
 ## Right-size or shutdown underutilized virtual machines
 
 AdvisorResources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.Advisor/Recommendations'
 | where properties.category == 'Cost' and 
     properties.shortDescription.problem == 'Right-size or shutdown underutilized virtual machines'
@@ -898,9 +902,5 @@ SecurityResources
     Remediation_Description = tostring(properties.metadata.remediationDescription),
     Policty_Definition_ID = tostring(properties.metadata.policyDefinitionId),
     Implementation_Effor = tostring(properties.metadata.implementationEffort)
-
----------------------------------------------------------------------------------------------------
-
----------------------------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------------------------------
