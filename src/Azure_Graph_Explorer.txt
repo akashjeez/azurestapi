@@ -1,3 +1,6 @@
+---------------------------------------------------------------------------------------------------
+@@ Azure Resource Graph Explorer | Example Scripts @@
+---------------------------------------------------------------------------------------------------
 
 ## Azure List All Subscriptions
 
@@ -15,9 +18,15 @@ ResourceContainers
 ## Azure List All Resource Groups
 
 ResourceContainers
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.Resources/Subscriptions/ResourceGroups'
 | project Resource_ID = tostring(id),
     Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name),
     Resource_Group = tostring(name), 
     Resource_Type = tostring(type), 
     Location = tostring(location)
@@ -27,8 +36,14 @@ ResourceContainers
 ## Azure List ALL Resoures
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | project Resource_ID = tostring(id),
     Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name),
     Resoure_Group = tostring(resourceGroup),
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -41,9 +56,15 @@ Resources
 ## Azure List Virtual Machines
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.Compute/VirtualMachines'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -61,9 +82,15 @@ Resources
 ## Azure List SQL Virtual Machines
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.SqlVirtualMachine/SqlVirtualMachines'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -79,9 +106,15 @@ Resources
 ## Azure List Classic Virtual Machines
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.classicCompute/VirtualMachines'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -96,12 +129,65 @@ Resources
 
 ---------------------------------------------------------------------------------------------------
 
+## Azure List Virtual Machine Images
+
+Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
+| where type =~ 'Microsoft.Compute/Images'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
+    Resource_Group = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location),
+    OS_Disk = tostring(properties.storageProfile.osDisk),
+    Data_Disks = tostring(properties.storageProfile.dataDisks),
+    Source_VM_ID = tostring(properties.sourceVirtualMachine.id)
+
+---------------------------------------------------------------------------------------------------
+
+## Azure List Virtual Machine Scale Sets
+
+Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
+| where type =~ 'Microsoft.Compute/VirtualMachineScaleSets'
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
+    Resource_Group = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location), 
+    Over_Provision = tostring(properties.overprovision),
+    Upgrade_Policy = tostring(properties.upgradePolicy),
+    OS_Profile = tostring(properties.virtualMachineProfile.osProfile),
+    Storage_Profile = tostring(properties.virtualMachineProfile.storageProfile),
+    Network_Profile = tostring(properties.virtualMachineProfile.networkProfile),
+    Diagnostics_Profile = tostring(properties.virtualMachineProfile.diagnosticsProfile)
+
+---------------------------------------------------------------------------------------------------
+
 ## Azure List Classic Storage Accounts
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.ClassicStorage/StorageAccounts'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -118,9 +204,15 @@ Resources
 ## Azure List Storage Accounts
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.Storage/StorageAccounts'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -139,9 +231,15 @@ Resources
 ## Azure List SQL Databases
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.SQL/Servers/Databases'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Database_Server_Name = tostring(split(id, '/')[8]),
     Database_Name = tostring(name), 
@@ -166,9 +264,15 @@ Resources
 ## Azure List SQL Elastic Pools
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.SQL/Servers/ElasticPools'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Database_Server_Name = tostring(split(id, '/')[8]),
     Resource_Name = tostring(name), 
@@ -186,13 +290,20 @@ Resources
 ## Azure List App Services
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.Web/Sites'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
     Resource_Location = tostring(location), 
+    Kind = tostring(properties.kind),
     Pricing_Tier = tostring(properties.sku),
     App_Status = tostring(properties.state),
     Inbound_IPAddress = tostring(properties.possibleInboundIpAddresses),
@@ -208,9 +319,15 @@ Resources
 ## Azure List App Service Plans
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.Web/ServerFarms'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -225,9 +342,15 @@ Resources
 ## Azure List Managed Disks
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.Compute/Disks'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -246,9 +369,15 @@ Resources
 ## Azure List Snaphsots
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.Compute/Snapshots'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -264,9 +393,15 @@ Resources
 ## Azure List Virtual Networks
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.Network/VirtualNetworks'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -284,9 +419,15 @@ Resources
 ## Azure List Azure CosmosDB Accounts
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.DocumentDb/DatabaseAccounts'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -309,9 +450,15 @@ Resources
 ## Azure List SQL Managed Instances
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.SQL/ManagedInstances'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -338,9 +485,15 @@ Resources
 ## Azure List CDN Profiles
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.CDN/Profiles'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -353,9 +506,15 @@ Resources
 ## Azure List Network Security Groups
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.Network/NetworkSecurityGroups'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -367,12 +526,42 @@ Resources
 
 ---------------------------------------------------------------------------------------------------
 
+## Azure List Unassociated Network Security Groups
+
+Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
+| where type =~ 'Microsoft.Network/NetworkSecurityGroups' 
+    and isnull(properties.networkInterfaces) 
+    and isnull(properties.subnets)
+| project Resource_ID = tostring(id), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
+    Resource_Group = tostring(resourceGroup), 
+    Resource_Name = tostring(name), 
+    Resource_Type = tostring(type), 
+    Resource_Location = tostring(location),
+    Security_Rules = tostring(properties.securityRules),
+    Default_Security_Rules = tostring(properties.defaultSecurityRules)
+| sort by Resource_Name asc
+
+---------------------------------------------------------------------------------------------------
+
 ## Azure List Public IP Addresses
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.Network/PublicIPAddresses'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -389,9 +578,15 @@ Resources
 ## Azure List Load Balancers
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.Network/LoadBalancers'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -409,9 +604,15 @@ Resources
 ## Azure List Application Gateways
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.Network/ApplicationGateways'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -436,9 +637,15 @@ Resources
 ## Azure List Recovery Service Vaults
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.RecoveryServices/Vaults'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -450,9 +657,15 @@ Resources
 ## Azure List Log Analytics Workspaces
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.OperationalInsights/Workspaces'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -471,9 +684,15 @@ Resources
 ## Azure List Key Vaults
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.KeyVault/Vaults'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -493,9 +712,15 @@ Resources
 ## Azure List VM Images
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.Compute/Images'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -510,9 +735,15 @@ Resources
 ## Azure List Container Registries
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.ContainerRegistry/Registries'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -527,9 +758,15 @@ Resources
 ## Azure List MySQL Database Servers
 
 Resources
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
 | where type =~ 'Microsoft.DBforMySQL/Servers'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -573,7 +810,8 @@ AdvisorResources
 | where properties.category == 'Cost' and 
     properties.shortDescription.problem == 'Right-size or shutdown underutilized virtual machines'
 | project Resource_ID = tostring(properties.resourceMetadata.resourceId),
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup),
     Resource_Name = tostring(properties.impactedValue),
     Resource_Type = tostring(properties.impactedField),
@@ -590,9 +828,15 @@ AdvisorResources
 ## Azure List Virtual Clusters
 
 Resources
-| where type =~ "Microsoft.Sql/VirtualClusters"
+| join kind = leftouter (
+    ResourceContainers 
+    | where type =~ 'Microsoft.Resources/Subscriptions' 
+    | project Subscription_Name = name, subscriptionId )
+on subscriptionId
+| where type =~ 'Microsoft.Sql/VirtualClusters'
 | project Resource_ID = tostring(id), 
-    Subscription_ID = tostring(subscriptionId), 
+    Subscription_ID = tostring(subscriptionId),
+    Subscription_Name = tostring(Subscription_Name), 
     Resource_Group = tostring(resourceGroup), 
     Resource_Name = tostring(name), 
     Resource_Type = tostring(type), 
@@ -600,5 +844,63 @@ Resources
     Subnet_ID = tostring(properties.subnetId),
     Child_Resources = tostring(properties.childResources[0]),
     Tags = tostring(properties.tags)
+
+---------------------------------------------------------------------------------------------------
+
+## Azure List Cloud Security Scores
+
+SecurityResources
+| where type =~ 'Microsoft.Security/SecureScores'
+| project Subscription_ID = tostring(subscriptionId),
+    Name = tostring(name),
+    Type = tostring(type),
+    Tenant_ID = tostring(tenantId),
+    Weight = tostring(properties.weight),
+    Max_Score = tostring(properties.score.max),
+    Current_Score = tostring(properties.score.current)
+
+---------------------------------------------------------------------------------------------------
+
+## Azure List Cloud Security Scores with Recommendations
+
+SecurityResources
+| where type =~ 'Microsoft.Security/SecureScores/SecureScoreControls'
+| project Subscription_ID = tostring(subscriptionId),
+    Name = tostring(name),
+    Type = tostring(type),
+    Tenant_ID = tostring(tenantId),
+    Current_Score = tostring(properties.score.current),
+    Max_Score = tostring(properties.score.max),
+    Definition = tostring(properties.definition),
+    Healthy_Resources = tostring(properties.healthyResourceCount),
+    Unhealthy_Resources = tostring(properties.unhealthyResourceCount),
+    NA_Resources = tostring(properties.notApplicableResourceCount)
+
+---------------------------------------------------------------------------------------------------
+
+## Azure List Cloud Security Center Assessments
+
+SecurityResources
+| where type =~ 'Microsoft.Security/Assessments'
+| project Subscription_ID = tostring(subscriptionId),
+    Name = tostring(name),
+    Type = tostring(type),
+    Tenant_ID = tostring(tenantId),
+    Display_Name = tostring(properties.displayName),
+    Status = tostring(properties.status.code),
+    Links = tostring(properties.links.azurePortal),
+    Severity = tostring(properties.metadata.severity),
+    Categories = tostring(properties.metadata.categories),
+    User_Impact = tostring(properties.metadata.userImpact),
+    Threats = tostring(properties.metadata.threats),
+    Description = tostring(properties.metadata.description),
+    Assessment_Type = tostring(properties.metadata.assessmentType),
+    Remediation_Description = tostring(properties.metadata.remediationDescription),
+    Policty_Definition_ID = tostring(properties.metadata.policyDefinitionId),
+    Implementation_Effor = tostring(properties.metadata.implementationEffort)
+
+---------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------------------------------
