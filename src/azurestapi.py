@@ -1,24 +1,28 @@
 __author__ = 'akashjeez'
 
-import os, sys, json, pandas, requests
+import os, sys, json, requests
 import re, math, random, itertools
 from datetime import datetime, timedelta
 
 
 class AzuRestAPI:
 
+	ARM_ENDPOINT = 'https://management.azure.com'
+	AUTH_ENDPOINT = 'https://login.microsoftonline.com'
+	RESOURCE_ENDPOINT = 'https://management.core.windows.net'
+	GRAPH_EXPL_ENDPOINT = 'https://graph.microsoft.com'
+	AGGREGATION = 'Average,Minimum,Maximum,Total,Count'
+	
+
 	def __init__(self, token: str) -> None:
 		self.token = token
-
-	BASE_URL = 'https://management.azure.com'
-	AGGREGATION = 'Average,Minimum,Maximum,Total,Count'
 
 
 	def List_Azure_Subscriptions(self) -> dict:
 		try:
 			dataset, API_VERSION = [], '2020-07-01'
 			headers = {'Authorization' : f'Bearer { self.token }'}
-			response = requests.get(f'{self.BASE_URL}/subscriptions?api-version={API_VERSION}', headers = headers).json()
+			response = requests.get(f'{self.ARM_ENDPOINT}/subscriptions?api-version={API_VERSION}', headers = headers).json()
 			for data in response['value']:
 				dataset.append({
 					'subscription_id': data.get('subscriptionId', 'TBD'),
@@ -38,7 +42,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/resourcegroups?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/resourcegroups?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -63,7 +67,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/resources?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/resources?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -89,7 +93,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.Compute/disks?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.Compute/disks?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -127,7 +131,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.Compute/snapshots?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.Compute/snapshots?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -164,7 +168,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.Compute/virtualMachines?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.Compute/virtualMachines?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					if data.get('name') in EXCLUDE_VMs:	continue
@@ -176,7 +180,7 @@ class AzuRestAPI:
 						'resource_name': data.get('name', 'TBD'),
 						'type': data.get('type', 'TBD'),
 						'location': data.get('location', 'TBD'),
-						'vm_status': requests.get(f"{self.BASE_URL}{data.get('id')}/instanceView?api-version=2019-07-01", headers = headers)\
+						'vm_status': requests.get(f"{self.ARM_ENDPOINT}{data.get('id')}/instanceView?api-version=2019-07-01", headers = headers)\
 							.json()['statuses'][-1].get('displayStatus', 'TBD'),
 					}
 					if properties := data['properties']:
@@ -218,7 +222,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.Advisor/recommendations?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.Advisor/recommendations?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -250,7 +254,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.ContainerRegistry/registries?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.ContainerRegistry/registries?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -291,7 +295,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.RecoveryServices/vaults?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.RecoveryServices/vaults?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -316,7 +320,7 @@ class AzuRestAPI:
 			dataset, API_VERSION = [], '2019-05-13'
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for vault in self.List_Azure_Recovery_Service_Vaults( subscriptions = subscriptions )['data']:
-				request_url = f"{self.BASE_URL}{vault.get('resource_id')}/backupProtectedItems?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}{vault.get('resource_id')}/backupProtectedItems?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -345,7 +349,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.Cdn/profiles?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.Cdn/profiles?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -374,7 +378,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.Network/applicationGateways?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.Network/applicationGateways?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -402,7 +406,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.CognitiveServices/accounts?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.CognitiveServices/accounts?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -432,7 +436,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -467,10 +471,10 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.Sql/servers?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.Sql/servers?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for server in response['value']:
-					response_2 = requests.get(f"{self.BASE_URL}{server.get('id')}/databases?api-version=2017-10-01-preview", headers = headers).json()
+					response_2 = requests.get(f"{self.ARM_ENDPOINT}{server.get('id')}/databases?api-version=2017-10-01-preview", headers = headers).json()
 					for data in response_2['value']:
 						if data.get('name') in EXCLUDE_DBs:	continue
 						data_dump = {
@@ -507,10 +511,10 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.Sql/servers?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.Sql/servers?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for server in response['value']:
-					response_2 = requests.get(f"{self.BASE_URL}{server.get('id')}/elasticPools?api-version=2017-10-01-preview", headers = headers).json()
+					response_2 = requests.get(f"{self.ARM_ENDPOINT}{server.get('id')}/elasticPools?api-version=2017-10-01-preview", headers = headers).json()
 					for data in response_2['value']:
 						if data.get('name') in EXCLUDE_DBS:	continue
 						data_dump = {
@@ -535,13 +539,42 @@ class AzuRestAPI:
 			return { 'data': { 'error': ex } }
 
 
+	def List_Azure_CosmosDB_Accounts(self, subscriptions: list) -> dict:
+		try:
+			dataset, API_VERSION = [], '2020-04-01'
+			headers = {'Authorization' : f'Bearer { self.token }'}
+			for subscription in subscriptions:
+				subscription_id = subscription['subscription_id']
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.DocumentDB/databaseAccounts?api-version={API_VERSION}'
+				response = requests.get( request_url , headers = headers ).json()
+				for data in response['value']:
+					data_dump = {
+						'resource_id': data.get('id', 'TBD'),
+						'subscription_id': subscription_id,
+						'subscription_name': subscription['subscription_name'],
+						'resource_group_name': data.get('id').split('/')[4],
+						'resource_name': data.get('name', 'TBD'),
+						'type': data.get('type','TBD'),
+						'location': data.get('location', 'TBD'),
+						'kind': data.get('kind', 'TBD'),
+					}
+					if 'properties' in data.keys():
+						data_dump.update( data.get('properties') )
+					if 'tags' in data.keys():
+						data_dump.update( data.get('tags') )
+					dataset.append( data_dump )
+			return { 'count': len(dataset), 'data': dataset }
+		except Exception as ex:
+			return { 'data': { 'error': ex } }
+
+
 	def List_Azure_SQL_Managed_Instances(self, subscriptions: list) -> dict:
 		try:
 			dataset, API_VERSION = [], '2018-06-01-preview'
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.Sql/managedInstances?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.Sql/managedInstances?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -570,7 +603,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.Network/loadBalancers?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.Network/loadBalancers?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -599,7 +632,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.OperationalInsights/workspaces?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.OperationalInsights/workspaces?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -627,7 +660,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.Storage/storageAccounts?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.Storage/storageAccounts?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -671,7 +704,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f'{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.Web/sites?api-version={API_VERSION}'
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.Web/sites?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -700,7 +733,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f'{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.Network/publicIPAddresses?api-version={API_VERSION}'
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.Network/publicIPAddresses?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -729,7 +762,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f"{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.Insights/components?api-version={API_VERSION}"
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.Insights/components?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -758,7 +791,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f'{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.Network/virtualNetworks?api-version={API_VERSION}'
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.Network/virtualNetworks?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -786,7 +819,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f'{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.Network/networkSecurityGroups?api-version={API_VERSION}'
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.Network/networkSecurityGroups?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -814,7 +847,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f'{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.Security/alerts?api-version={API_VERSION}'
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.Security/alerts?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -839,7 +872,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f'{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.Web/serverfarms?api-version={API_VERSION}'
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.Web/serverfarms?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -869,7 +902,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f'{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.ClassicStorage/storageAccounts?api-version={API_VERSION}'
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.ClassicStorage/storageAccounts?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -895,7 +928,7 @@ class AzuRestAPI:
 			headers = {'Authorization' : f'Bearer { self.token }'}
 			for subscription in subscriptions:
 				subscription_id = subscription['subscription_id']
-				request_url = f'{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.ClassicCompute/virtualMachines?api-version={API_VERSION}'
+				request_url = f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.ClassicCompute/virtualMachines?api-version={API_VERSION}'
 				response = requests.get( request_url , headers = headers ).json()
 				for data in response['value']:
 					data_dump = {
@@ -919,10 +952,8 @@ class AzuRestAPI:
 		try:
 			dataset, API_VERSION = [], '2015-04-01'
 			headers = {'Authorization' : f'Bearer { self.token }'}
-			request_url = (
-				f'{self.BASE_URL}/subscriptions/{subscription_id}/providers/Microsoft.insights/eventtypes/' + 
-				f'management/values?api-version={API_VERSION}&$filter={filter_query}'
-			)
+			request_url = ( f'{self.ARM_ENDPOINT}/subscriptions/{subscription_id}/providers/Microsoft.insights/' +
+				f'eventtypes/management/values?api-version={API_VERSION}&$filter={filter_query}' )
 			response = requests.get(request_url , headers = headers).json()
 			for data in response['value']:
 				data_dump = {
@@ -959,7 +990,7 @@ class AzuRestAPI:
 		try:
 			dataset, API_VERSION = [], '2018-01-01'
 			headers = {'Authorization' : f'Bearer { self.token }'}
-			request_url = f"{self.BASE_URL}{resource_id}/providers/Microsoft.insights/metricDefinitions?api-version={API_VERSION}"
+			request_url = f'{self.ARM_ENDPOINT}{resource_id}/providers/Microsoft.insights/metricDefinitions?api-version={API_VERSION}'
 			response = requests.get( request_url , headers = headers ).json()
 			for data in response['value']:
 				data_dump = {
@@ -971,7 +1002,6 @@ class AzuRestAPI:
 					'supported_aggregation_types': data.get('supportedAggregationTypes', 'TBD'),
 					'metric_availabilities': data.get('metricAvailabilities', 'TBD')
 				}
-				print('\n', data_dump)
 				dataset.append( data_dump )
 			return { 'count': len(dataset), 'data': dataset }
 		except Exception as ex:
@@ -982,9 +1012,8 @@ class AzuRestAPI:
 		try:
 			dataset, API_VERSION = [], '2018-01-01'
 			headers = {'Authorization' : f'Bearer { self.token }'}
-			request_url = ( 
-				f'{self.BASE_URL}{resource_id}/providers/microsoft.insights/metrics?api-version={API_VERSION}&metricnames={metric_name}' +
-				f'&timespan={timespan}&interval={interval}&aggregation={self.AGGREGATION}' )
+			request_url = ( f'{self.ARM_ENDPOINT}{resource_id}/providers/microsoft.insights/metrics?api-version={API_VERSION}&' +
+				f'metricnames={metric_name}&timespan={timespan}&interval={interval}&aggregation={self.AGGREGATION}' )
 			response = requests.get( request_url , headers = headers ).json()
 			for temp_1 in response['value']:
 				for temp_2 in temp_1['timeseries']:
@@ -1005,6 +1034,3 @@ class AzuRestAPI:
 			return { 'count': len(dataset), 'data': dataset }
 		except Exception as ex:
 			return { 'data': { 'error': ex } }
-
-
-#-------------------------------------------------------------------------------------------------------------------------------------------------#
