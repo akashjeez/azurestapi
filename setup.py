@@ -18,7 +18,7 @@ setup(
         'Operating System :: OS Independent',
     ],
     python_requires = '>=3.8',
-    install_requires = ['requests', 'pandas', 'xlsxwriter'],
+    install_requires = ['requests'],
     py_modules = ['azurestapi'],
     package_dir = {'': 'src'}
 )
